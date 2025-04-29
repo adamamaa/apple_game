@@ -11,77 +11,26 @@
         /* General body styling */
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            overscroll-behavior: none; /* Prevent pull-to-refresh */
+            overscroll-behavior: none;
             background-color: #f0fdf4;
             margin: 0;
             padding: 0;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Apple styling */
-        .apple {
-            width: 40px;
-            height: 40px;
-            background-image: linear-gradient(to bottom, #f87171, #dc2626);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
+            display: flex; /* Use flexbox for centering */
+            flex-direction: column;
             align-items: center;
-            font-weight: bold;
-            color: white;
-            font-size: 16px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            cursor: default;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            border: 1px solid #b91c1c;
-            box-shadow: inset 0 -4px 5px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-            transition: transform 0.15s ease-out, opacity 0.3s ease-out;
-            touch-action: none;
-        }
-        .apple.in-selection-box {
-            transform: scale(1.1);
-            box-shadow: inset 0 -4px 5px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2), 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        .apple.selected-for-removal {
-            opacity: 0;
-            transform: scale(0) rotate(360deg);
-            transition: transform 0.4s ease-in-out, opacity 0.4s ease-out;
-        }
-        .apple-placeholder {
-             width: 40px;
-             height: 40px;
-             visibility: hidden;
+            min-height: 100vh; /* Ensure body takes full height */
         }
 
-        /* Selection box styling */
-        #selection-box {
-            position: absolute;
-            border: 3px dashed #3b82f6;
-            background-color: rgba(59, 130, 246, 0.15);
-            pointer-events: none;
-            z-index: 10;
-            border-radius: 8px;
-            transition: border-color 0.1s, background-color 0.1s;
-        }
-        #selection-box.target-sum {
-            border: 3px solid #ef4444;
-            background-color: rgba(239, 68, 68, 0.25);
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
-        }
-
-        /* Main game container */
+        /* Main game container - Default to row (desktop) */
         #game-container {
             display: flex;
+            flex-direction: row; /* Default: Info panel on the right */
             justify-content: center;
             align-items: flex-start;
             gap: 25px;
-            padding: 15px;
-            flex-wrap: wrap;
+            padding: 20px; /* Consistent padding */
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
@@ -91,24 +40,23 @@
         /* Game grid styling */
         #grid {
             display: grid;
-            grid-template-columns: repeat(17, auto);
+            /* grid-template-columns will be set by JS */
             gap: 8px;
             padding: 15px;
             background-color: #dcfce7;
             border-radius: 16px;
             border: 4px solid #6ee7b7;
             position: relative;
-            width: min-content;
-            max-width: 100%;
+            width: auto; /* Let grid size be determined by content */
+            max-width: 100%; /* Prevent overflow */
             box-sizing: border-box;
             touch-action: none;
             cursor: grab;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            overflow: auto;
+            /* overflow: auto; Removed overflow auto to prevent scrollbars */
+            flex-shrink: 0; /* Prevent grid from shrinking */
         }
-        #grid:active {
-             cursor: grabbing;
-        }
+        #grid:active { cursor: grabbing; }
 
         /* Game info panel styling */
         #game-info {
@@ -120,14 +68,46 @@
             background-color: #fff;
             border-radius: 16px;
             border: 2px solid #e5e7eb;
-            min-width: 180px;
-            width: 100%;
-            max-width: 350px;
+            width: 280px; /* Fixed width for desktop */
+            flex-shrink: 0; /* Prevent info panel from shrinking */
             user-select: none;
             -webkit-user-select: none;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
+            max-height: calc(100vh - 100px); /* Limit height */
+            overflow-y: auto; /* Allow scrolling if content overflows */
         }
+
+        /* Apple styling */
+        .apple {
+            width: 38px; /* Slightly adjusted size */
+            height: 38px;
+            background-image: linear-gradient(to bottom, #f87171, #dc2626);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            font-size: 15px; /* Adjusted font size */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            cursor: default;
+            user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
+            border: 1px solid #b91c1c;
+            box-shadow: inset 0 -4px 5px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            transition: transform 0.15s ease-out, opacity 0.3s ease-out;
+            touch-action: none;
+        }
+        .apple.in-selection-box { transform: scale(1.1); box-shadow: inset 0 -4px 5px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2), 0 0 10px rgba(255, 255, 255, 0.5); }
+        .apple.selected-for-removal { opacity: 0; transform: scale(0) rotate(360deg); transition: transform 0.4s ease-in-out, opacity 0.4s ease-out; }
+        .apple-placeholder { width: 38px; height: 38px; visibility: hidden; }
+
+        /* Selection box styling */
+        #selection-box { position: absolute; border: 3px dashed #3b82f6; background-color: rgba(59, 130, 246, 0.15); pointer-events: none; z-index: 10; border-radius: 8px; transition: border-color 0.1s, background-color 0.1s; }
+        #selection-box.target-sum { border: 3px solid #ef4444; background-color: rgba(239, 68, 68, 0.25); box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+
+        /* Info panel items */
         .info-item { text-align: center; width: 100%; }
         .info-label { font-size: 1.1rem; font-weight: 600; color: #4b5563; margin-bottom: 4px; }
         .info-value { font-size: 2rem; font-weight: 700; }
@@ -138,11 +118,11 @@
         #combo-counter { font-size: 1.5rem; font-weight: bold; color: #f59e0b; margin-top: 5px; height: 30px; transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(10px); }
         #combo-counter.visible { opacity: 1; transform: translateY(0); }
 
-        /* Timer gauge styling */
-        #timer-gauge-container { width: 20px; height: 250px; background-color: #e5e7eb; border-radius: 10px; overflow: hidden; border: 1px solid #d1d5db; margin: 8px auto 0 auto; }
+        /* Timer gauge */
+        #timer-gauge-container { width: 20px; height: 200px; background-color: #e5e7eb; border-radius: 10px; overflow: hidden; border: 1px solid #d1d5db; margin: 8px auto 0 auto; }
         #timer-gauge { width: 100%; height: 100%; background-color: #10b981; transition: height 0.5s linear, background-color 0.3s; border-radius: 10px 10px 0 0; }
 
-        /* Ranking board styling */
+        /* Ranking board */
         #ranking-board { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb; width: 100%; }
         #ranking-list { list-style: none; padding: 0; margin: 0; text-align: left; max-height: 150px; overflow-y: auto; }
         #ranking-list li { padding: 5px 2px; font-size: 0.95rem; color: #374151; border-bottom: 1px dashed #f3f4f6; display: flex; justify-content: space-between; }
@@ -150,46 +130,78 @@
         #ranking-list .rank-score { font-weight: 600; margin-left: 10px; }
         #ranking-list .no-ranking { text-align: center; color: #9ca3af; font-style: italic; justify-content: center; }
 
-        /* Button styling */
+        /* Buttons */
         .game-button { padding: 12px 24px; background-image: linear-gradient(to bottom, #3b82f6, #2563eb); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); margin-top: 15px; width: 80%; max-width: 250px; display: block; margin-left: auto; margin-right: auto; }
         .game-button:hover { background-image: linear-gradient(to bottom, #2563eb, #1d4ed8); }
         .game-button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }
 
-        /* Message box styling */
-        #message-box { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 15px; }
+        /* Message box */
+        #message-box { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); display: none; /* Initially hidden */ align-items: center; justify-content: center; z-index: 100; padding: 15px; }
         #message-box > div { background-color: white; padding: 25px 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); text-align: center; max-width: 90%; width: 400px; }
         #message-text { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: #333; }
         #message-box .game-button { width: auto; padding: 10px 30px; margin-top: 0; }
 
-        /* Responsive Adjustments */
-        @media (max-width: 1024px) {
-             #game-container { flex-direction: column; align-items: center; padding: 15px; }
-             #grid { grid-template-columns: repeat(auto-fit, minmax(35px, 1fr)); gap: 6px; width: 100%; max-width: 600px; padding: 15px; }
-             .apple, .apple-placeholder { width: 35px; height: 35px; font-size: 14px; }
-             #game-info { flex-direction: row; width: 100%; max-width: 600px; justify-content: space-around; flex-wrap: wrap; gap: 10px; padding: 15px; }
-             .info-item { width: auto; flex-basis: calc(50% - 10px); min-width: 120px; }
-             #ranking-board { flex-basis: 100%; margin-top: 10px; }
-             #timer-gauge-container { width: 150px; height: 20px; margin-top: 5px; }
-             #timer-gauge { height: 100%; width: 100%; transition: width 0.5s linear, background-color 0.3s; border-radius: 10px 0 0 10px; }
-             #combo-counter { margin-top: 0; }
-             .game-button { width: 60%; }
-        }
-         @media (max-width: 640px) {
-             #game-container { padding: 10px; gap: 15px; }
-             #grid { grid-template-columns: repeat(auto-fit, minmax(30px, 1fr)); gap: 5px; padding: 10px; }
-             .apple, .apple-placeholder { width: 30px; height: 30px; font-size: 12px; }
-             #game-info { flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: none; padding: 15px; }
-             .info-item { width: 100%; flex-basis: auto; }
+        /* --- Responsive Adjustments --- */
+
+        /* Mobile layout (e.g., screens <= 768px) */
+        @media (max-width: 768px) {
+             body { padding: 0; /* Remove body padding on mobile */ }
+             h1 { font-size: 1.5rem; margin-top: 15px; margin-bottom: 10px;} /* Adjust title size/margin */
+             #game-container {
+                 flex-direction: column; /* Stack grid and info vertically */
+                 align-items: center; /* Center items horizontally */
+                 padding: 10px; /* Reduce padding */
+                 gap: 15px; /* Reduce gap */
+             }
+             #grid {
+                 /* Grid columns are set by JS for mobile (e.g., 10) */
+                 gap: 5px;
+                 padding: 10px;
+                 width: auto; /* Allow grid to size based on content */
+                 max-width: 100%; /* Ensure it fits */
+                 order: 1; /* Grid first */
+             }
+             .apple, .apple-placeholder {
+                 width: 30px; /* Smaller apples for mobile */
+                 height: 30px;
+                 font-size: 12px;
+             }
+             #game-info {
+                 order: 2; /* Info panel second */
+                 width: 100%; /* Full width */
+                 max-width: 400px; /* Limit max width */
+                 padding: 15px;
+                 gap: 10px;
+                 max-height: none; /* Remove max height limit */
+                 overflow-y: visible; /* Disable scrolling */
+             }
+             .info-item { width: 100%; } /* Full width for stacked items */
              #ranking-board { width: 100%; margin-top: 15px; }
-             #timer-gauge-container { width: 80%; height: 15px; }
+             #timer-gauge-container {
+                 width: 80%; /* Wider horizontal gauge */
+                 height: 15px;
+                 margin-top: 5px;
+             }
+             #timer-gauge {
+                 height: 100%;
+                 width: 100%;
+                 transition: width 0.5s linear, background-color 0.3s;
+                 border-radius: 10px; /* Full radius for horizontal */
+             }
              .info-label { font-size: 1rem; }
              .info-value { font-size: 1.75rem; }
              #combo-counter { font-size: 1.25rem; height: 25px; }
-             .game-button { padding: 10px 20px; width: 70%; }
+             .game-button {
+                 padding: 10px 20px;
+                 width: 70%;
+                 margin-top: 10px;
+             }
              #message-box > div { padding: 20px; }
              #message-text { font-size: 1.25rem; margin-bottom: 15px;}
-         }
+        }
+         /* Very small screens adjustments if needed */
          @media (max-width: 380px) {
+              h1 { font-size: 1.3rem; }
               .apple, .apple-placeholder { width: 28px; height: 28px; font-size: 11px; }
               #grid { gap: 4px; padding: 8px; }
               .info-label { font-size: 0.9rem; }
@@ -199,7 +211,7 @@
          }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center min-h-screen p-0 sm:p-4">
+<body class="bg-gray-100 flex flex-col items-center min-h-screen">
     <h1 class="text-2xl sm:text-3xl font-bold my-4 sm:my-6 text-gray-800 text-center">사과 합계 게임 🍎</h1>
 
     <div id="game-container">
@@ -236,7 +248,7 @@
 
     <div id="selection-box" style="display: none;"></div>
 
-    <div id="message-box" style="display: none;">
+    <div id="message-box">
         <div>
             <p id="message-text"></p>
             <button id="close-message-button" class="game-button">확인</button>
@@ -245,8 +257,12 @@
 
     <script>
         // --- Game Settings ---
-        const GRID_ROWS = 10;
-        const GRID_COLS = 17;
+        const DESKTOP_GRID_ROWS = 10;
+        const DESKTOP_GRID_COLS = 17;
+        const MOBILE_GRID_ROWS = 10;
+        const MOBILE_GRID_COLS = 10; // Mobile grid size (10x10 = 100 apples)
+        const MOBILE_BREAKPOINT = 768; // Width threshold for mobile layout
+
         const TARGET_SUM = 10;
         const GAME_DURATION_SECONDS = 120;
         const COMBO_TIMEOUT_MS = 2000;
@@ -260,7 +276,7 @@
         const timeElement = document.getElementById('time');
         const applesLeftElement = document.getElementById('apples-left');
         const timerGaugeElement = document.getElementById('timer-gauge');
-        // ... (other DOM elements remain the same)
+        const timerGaugeContainer = document.getElementById('timer-gauge-container');
         const selectionBoxElement = document.getElementById('selection-box');
         const resetButton = document.getElementById('reset-button');
         const messageBox = document.getElementById('message-box');
@@ -282,7 +298,9 @@
         let selectedApplesData = [];
         let currentSum = 0;
         let isGameOver = false;
-        let totalApples = GRID_ROWS * GRID_COLS;
+        let currentGridRows = DESKTOP_GRID_ROWS; // Current grid dimensions
+        let currentGridCols = DESKTOP_GRID_COLS;
+        let totalApples = currentGridRows * currentGridCols; // Total apples based on current grid
         let applesRemaining = totalApples;
         let comboCount = 0;
         let lastClearTime = 0;
@@ -292,64 +310,29 @@
         let soundsReady = false;
         let successSound, gameOverSound, comboSound;
 
-        async function initSounds() {
+        async function initSounds() { /* Sound initialization remains the same */
             if (soundsReady) return;
             try {
                 await Tone.start();
                 successSound = new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.2 } }).toDestination();
                 comboSound = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.005, decay: 0.05, sustain: 0.0, release: 0.1 } }).toDestination();
                 gameOverSound = new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.0, release: 0.2 } }).toDestination();
-                soundsReady = true;
-                console.log("Sounds initialized successfully.");
-            } catch (e) {
-                console.error("Failed to initialize sounds:", e);
-            }
+                soundsReady = true; console.log("Sounds initialized.");
+            } catch (e) { console.error("Failed to initialize sounds:", e); }
         }
 
         // --- Ranking Functions ---
-        function getRankings() {
+        function getRankings() { /* getRankings remains the same */
             const rankingsJSON = localStorage.getItem(RANKING_STORAGE_KEY);
             let rankings = [];
-            if (rankingsJSON) {
-                try {
-                    rankings = JSON.parse(rankingsJSON);
-                    if (!Array.isArray(rankings)) { rankings = []; }
-                } catch (e) { console.error("Error parsing rankings:", e); rankings = []; }
-            }
-            rankings.sort((a, b) => b.score - a.score);
-            return rankings.slice(0, MAX_RANKINGS);
+            if (rankingsJSON) { try { rankings = JSON.parse(rankingsJSON); if (!Array.isArray(rankings)) { rankings = []; } } catch (e) { console.error("Error parsing rankings:", e); rankings = []; } }
+            rankings.sort((a, b) => b.score - a.score); return rankings.slice(0, MAX_RANKINGS);
         }
-
-        function saveScore(name, score) {
-            if (!name || score <= 0) return;
-            const rankings = getRankings();
-            const newScoreEntry = { name: name, score: score, date: new Date().toLocaleDateString() };
-            rankings.push(newScoreEntry);
-            rankings.sort((a, b) => b.score - a.score);
-            const updatedRankings = rankings.slice(0, MAX_RANKINGS);
-            try {
-                localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(updatedRankings));
-                console.log("Score saved:", newScoreEntry);
-            } catch (e) { console.error("Error saving rankings:", e); alert("랭킹 저장에 실패했습니다. 저장 공간이 부족할 수 있습니다."); }
+        function saveScore(name, score) { /* saveScore remains the same */
+            if (!name || score <= 0) return; const rankings = getRankings(); const newScoreEntry = { name: name, score: score, date: new Date().toLocaleDateString() }; rankings.push(newScoreEntry); rankings.sort((a, b) => b.score - a.score); const updatedRankings = rankings.slice(0, MAX_RANKINGS); try { localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(updatedRankings)); console.log("Score saved:", newScoreEntry); } catch (e) { console.error("Error saving rankings:", e); alert("랭킹 저장에 실패했습니다. 저장 공간이 부족할 수 있습니다."); }
         }
-
-        function displayRankings() {
-            const rankings = getRankings();
-            rankingListElement.innerHTML = '';
-            if (rankings.length === 0) {
-                rankingListElement.innerHTML = '<li class="no-ranking">아직 랭킹이 없습니다.</li>';
-            } else {
-                rankings.forEach((entry, index) => {
-                    const li = document.createElement('li');
-                    const rankText = document.createTextNode(`${index + 1}. ${entry.name} `);
-                    const scoreSpan = document.createElement('span');
-                    scoreSpan.classList.add('rank-score');
-                    scoreSpan.textContent = entry.score;
-                    li.appendChild(rankText);
-                    li.appendChild(scoreSpan);
-                    rankingListElement.appendChild(li);
-                });
-            }
+        function displayRankings() { /* displayRankings remains the same */
+            const rankings = getRankings(); rankingListElement.innerHTML = ''; if (rankings.length === 0) { rankingListElement.innerHTML = '<li class="no-ranking">아직 랭킹이 없습니다.</li>'; } else { rankings.forEach((entry, index) => { const li = document.createElement('li'); const rankText = document.createTextNode(`${index + 1}. ${entry.name} `); const scoreSpan = document.createElement('span'); scoreSpan.classList.add('rank-score'); scoreSpan.textContent = entry.score; li.appendChild(rankText); li.appendChild(scoreSpan); rankingListElement.appendChild(li); }); }
         }
 
         // --- Core Game Functions ---
@@ -360,11 +343,19 @@
         function initGame() {
             if (!soundsReady) { console.log("Sound context needs user interaction."); }
 
+            // --- Determine grid size based on screen width ---
+            const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+            currentGridRows = isMobile ? MOBILE_GRID_ROWS : DESKTOP_GRID_ROWS;
+            currentGridCols = isMobile ? MOBILE_GRID_COLS : DESKTOP_GRID_COLS;
+            totalApples = currentGridRows * currentGridCols;
+            console.log(`Initializing game with grid: ${currentGridRows}x${currentGridCols} (${totalApples} apples)`);
+            // --- End grid size determination ---
+
             isGameOver = false;
             score = 0;
             timeLeft = GAME_DURATION_SECONDS;
             apples = [];
-            applesRemaining = totalApples;
+            applesRemaining = totalApples; // Use calculated totalApples
             comboCount = 0;
             lastClearTime = 0;
             clearTimeout(comboTimeout);
@@ -376,15 +367,16 @@
             currentPointerId = null;
             updateScore();
             updateTimerDisplay();
-            updateApplesLeftDisplay();
+            updateApplesLeftDisplay(); // Update based on potentially new totalApples
             resetTimerGauge();
 
-            // --- Start: Generate apple values ensuring total sum is multiple of 10 ---
+            // --- Generate apple values ensuring total sum is multiple of 10 ---
             let initialNumbers = [];
             let currentTotalSum = 0;
-            for (let r = 0; r < GRID_ROWS; r++) {
+            // Use currentGridRows and currentGridCols
+            for (let r = 0; r < currentGridRows; r++) {
                 initialNumbers[r] = [];
-                for (let c = 0; c < GRID_COLS; c++) {
+                for (let c = 0; c < currentGridCols; c++) {
                     const randomValue = Math.floor(Math.random() * 9) + 1;
                     initialNumbers[r][c] = randomValue;
                     currentTotalSum += randomValue;
@@ -393,52 +385,40 @@
 
             const remainder = currentTotalSum % 10;
             if (remainder !== 0) {
-                const adjustment = 10 - remainder; // How much to add to reach the next multiple of 10
+                const adjustment = 10 - remainder;
                 let adjusted = false;
-
-                // Try to add the adjustment
-                for (let r = 0; r < GRID_ROWS && !adjusted; r++) {
-                    for (let c = 0; c < GRID_COLS && !adjusted; c++) {
+                // Try adding
+                for (let r = 0; r < currentGridRows && !adjusted; r++) {
+                    for (let c = 0; c < currentGridCols && !adjusted; c++) {
                         if (initialNumbers[r][c] + adjustment <= 9) {
-                            initialNumbers[r][c] += adjustment;
-                            currentTotalSum += adjustment; // Update sum tracking
-                            adjusted = true;
-                            console.log(`Adjusted apple at (${r},${c}) by +${adjustment} to make sum multiple of 10.`);
+                            initialNumbers[r][c] += adjustment; currentTotalSum += adjustment; adjusted = true;
+                            console.log(`Adjusted apple at (${r},${c}) by +${adjustment}`); break; // Optimization: break inner loop
                         }
                     }
                 }
-
-                // If adding didn't work, try subtracting the remainder
-                // (equivalent to adding adjustment - 10)
+                // Try subtracting if adding failed
                 if (!adjusted) {
-                    const subtractAdjustment = -remainder; // How much to subtract
-                     for (let r = 0; r < GRID_ROWS && !adjusted; r++) {
-                        for (let c = 0; c < GRID_COLS && !adjusted; c++) {
+                    const subtractAdjustment = -remainder;
+                     for (let r = 0; r < currentGridRows && !adjusted; r++) {
+                        for (let c = 0; c < currentGridCols && !adjusted; c++) {
                             if (initialNumbers[r][c] + subtractAdjustment >= 1) {
-                                initialNumbers[r][c] += subtractAdjustment;
-                                currentTotalSum += subtractAdjustment; // Update sum tracking
-                                adjusted = true;
-                                console.log(`Adjusted apple at (${r},${c}) by ${subtractAdjustment} to make sum multiple of 10.`);
+                                initialNumbers[r][c] += subtractAdjustment; currentTotalSum += subtractAdjustment; adjusted = true;
+                                console.log(`Adjusted apple at (${r},${c}) by ${subtractAdjustment}`); break; // Optimization
                             }
                         }
                     }
                 }
-                 // Fallback: If still not adjusted (highly unlikely with 170 numbers), log it.
-                 // The logic should almost always find a place to adjust.
-                 if(!adjusted) {
-                     console.warn("Could not adjust apple values to make sum a multiple of 10. This is unexpected.");
-                 }
+                 if(!adjusted) { console.warn("Could not adjust sum to be multiple of 10."); }
             }
             console.log("Final calculated total sum:", currentTotalSum, "Multiple of 10?", currentTotalSum % 10 === 0);
             // --- End: Generate apple values ---
 
-
-            // Create apple elements using the pre-calculated and adjusted numbers
-            gridElement.style.gridTemplateColumns = `repeat(${GRID_COLS}, auto)`;
-            for (let r = 0; r < GRID_ROWS; r++) {
-                apples[r] = []; // Initialize row in the main 'apples' array
-                for (let c = 0; c < GRID_COLS; c++) {
-                    // Use the value from initialNumbers
+            // Create apple elements using the adjusted numbers
+            // Dynamically set grid columns based on currentGridCols
+            gridElement.style.gridTemplateColumns = `repeat(${currentGridCols}, auto)`;
+            for (let r = 0; r < currentGridRows; r++) {
+                apples[r] = [];
+                for (let c = 0; c < currentGridCols; c++) {
                     createApple(r, c, initialNumbers[r][c]);
                 }
             }
@@ -451,174 +431,56 @@
         }
 
         /** Create a single apple element with a specific value */
-        // Modified to accept value as argument
         function createApple(row, col, appleValue) {
-            // const appleValue = Math.floor(Math.random() * 9) + 1; // Removed random generation here
             const appleElement = document.createElement('div');
             appleElement.classList.add('apple');
             appleElement.textContent = appleValue;
             appleElement.dataset.row = row;
             appleElement.dataset.col = col;
-            appleElement.dataset.value = appleValue; // Use the provided value
-
+            appleElement.dataset.value = appleValue;
             gridElement.appendChild(appleElement);
+            // Ensure the apples array row exists before assigning
+            if (!apples[row]) { apples[row] = []; }
             apples[row][col] = { element: appleElement, value: appleValue, row: row, col: col };
         }
 
-        // ... (updateScore, updateApplesLeftDisplay, updateComboDisplay, resetComboTimer, updateTimer, updateTimerDisplay, updateTimerGauge, resetTimerGauge functions remain the same) ...
+        // --- Other core functions remain largely the same ---
         function updateScore() { scoreElement.textContent = score; }
         function updateApplesLeftDisplay() { applesLeftElement.textContent = applesRemaining; }
-        function updateComboDisplay() {
-            if (comboCount > 1) {
-                comboCounterElement.textContent = `${comboCount} COMBO!`;
-                comboCounterElement.classList.add('visible');
-                 if (soundsReady && comboSound) { try { const pitch = Tone.Frequency("C4").transpose((comboCount - 1) * 2); comboSound.triggerAttackRelease(pitch, '8n', Tone.now()); } catch (e) { console.error("Error playing combo sound:", e); } }
-            } else { comboCounterElement.classList.remove('visible'); }
+        function updateComboDisplay() { /* Same as before */
+            if (comboCount > 1) { comboCounterElement.textContent = `${comboCount} COMBO!`; comboCounterElement.classList.add('visible'); if (soundsReady && comboSound) { try { const pitch = Tone.Frequency("C4").transpose((comboCount - 1) * 2); comboSound.triggerAttackRelease(pitch, '8n', Tone.now()); } catch (e) { console.error("Error playing combo sound:", e); } } } else { comboCounterElement.classList.remove('visible'); }
         }
-        function resetComboTimer() { clearTimeout(comboTimeout); comboTimeout = setTimeout(() => { comboCount = 0; updateComboDisplay(); console.log("Combo reset"); }, COMBO_TIMEOUT_MS); }
-        function updateTimer() { if (isGameOver) return; timeLeft--; updateTimerDisplay(); updateTimerGauge(); if (timeLeft <= 0) { endGame("시간 종료!"); } }
-        function updateTimerDisplay() { timeElement.textContent = timeLeft; if (timeLeft <= 10) { timeElement.classList.add('low-time'); } else { timeElement.classList.remove('low-time'); } }
-        function updateTimerGauge() { const percentage = Math.max(0, (timeLeft / GAME_DURATION_SECONDS) * 100); const isHorizontal = window.innerWidth <= 1024 && window.innerHeight > window.innerWidth; if (isHorizontal) { timerGaugeElement.style.width = `${percentage}%`; timerGaugeElement.style.height = '100%'; } else { timerGaugeElement.style.height = `${percentage}%`; timerGaugeElement.style.width = '100%'; } if (percentage <= 10) { timerGaugeElement.style.backgroundColor = '#ef4444'; } else if (percentage <= 25) { timerGaugeElement.style.backgroundColor = '#f59e0b'; } else { timerGaugeElement.style.backgroundColor = '#10b981'; } }
-        function resetTimerGauge() { const isHorizontal = window.innerWidth <= 1024 && window.innerHeight > window.innerWidth; if (isHorizontal) { timerGaugeElement.style.width = '100%'; timerGaugeElement.style.height = '100%'; } else { timerGaugeElement.style.height = '100%'; timerGaugeElement.style.width = '100%'; } timerGaugeElement.style.backgroundColor = '#10b981'; }
-
-
-        /** Handle game over sequence */
-        function endGame(reason = "게임 종료!") {
-            if (isGameOver) return;
-            isGameOver = true;
-            clearInterval(timerInterval);
-            isDragging = false;
-            if (currentPointerId !== null) { try { gridElement.releasePointerCapture(currentPointerId); } catch(e) { console.warn("Failed to release pointer capture:", e); } currentPointerId = null; }
-            selectionBoxElement.style.display = 'none';
-            if (soundsReady && gameOverSound) { try { gameOverSound.triggerAttackRelease("C3", "0.5n", Tone.now()); } catch(e) { console.error("Error playing game over sound:", e); } }
-            clearTimeout(comboTimeout);
-            console.log("Game Over!", reason);
-            const finalScore = score;
-            showMessage(`${reason} 최종 점수: ${finalScore}`);
-            if (finalScore > 0) {
-                 setTimeout(() => {
-                     const playerName = prompt("랭킹에 등록할 이름을 입력하세요 (최대 10자):", "Player");
-                     if (playerName) {
-                         const trimmedName = playerName.trim().slice(0, 10);
-                         if (trimmedName) { saveScore(trimmedName, finalScore); displayRankings(); }
-                     }
-                 }, 100);
-            }
-        }
+        function resetComboTimer() { /* Same as before */ clearTimeout(comboTimeout); comboTimeout = setTimeout(() => { comboCount = 0; updateComboDisplay(); console.log("Combo reset"); }, COMBO_TIMEOUT_MS); }
+        function updateTimer() { /* Same as before */ if (isGameOver) return; timeLeft--; updateTimerDisplay(); updateTimerGauge(); if (timeLeft <= 0) { endGame("시간 종료!"); } }
+        function updateTimerDisplay() { /* Same as before */ timeElement.textContent = timeLeft; if (timeLeft <= 10) { timeElement.classList.add('low-time'); } else { timeElement.classList.remove('low-time'); } }
+        function updateTimerGauge() { /* Same as before */ const percentage = Math.max(0, (timeLeft / GAME_DURATION_SECONDS) * 100); const isHorizontal = window.innerWidth <= MOBILE_BREAKPOINT; /* Use breakpoint for gauge orientation too */ if (isHorizontal) { timerGaugeElement.style.width = `${percentage}%`; timerGaugeElement.style.height = '100%'; timerGaugeContainer.style.width='80%'; timerGaugeContainer.style.height='15px'; timerGaugeElement.style.borderRadius='10px';} else { timerGaugeElement.style.height = `${percentage}%`; timerGaugeElement.style.width = '100%'; timerGaugeContainer.style.width='20px'; timerGaugeContainer.style.height='200px'; timerGaugeElement.style.borderRadius='10px 10px 0 0';} if (percentage <= 10) { timerGaugeElement.style.backgroundColor = '#ef4444'; } else if (percentage <= 25) { timerGaugeElement.style.backgroundColor = '#f59e0b'; } else { timerGaugeElement.style.backgroundColor = '#10b981'; } }
+        function resetTimerGauge() { /* Same as before */ const isHorizontal = window.innerWidth <= MOBILE_BREAKPOINT; if (isHorizontal) { timerGaugeElement.style.width = '100%'; timerGaugeElement.style.height = '100%'; timerGaugeContainer.style.width='80%'; timerGaugeContainer.style.height='15px'; timerGaugeElement.style.borderRadius='10px';} else { timerGaugeElement.style.height = '100%'; timerGaugeElement.style.width = '100%'; timerGaugeContainer.style.width='20px'; timerGaugeContainer.style.height='200px'; timerGaugeElement.style.borderRadius='10px 10px 0 0';} timerGaugeElement.style.backgroundColor = '#10b981'; }
+        function endGame(reason = "게임 종료!") { /* Same as before */ if (isGameOver) return; isGameOver = true; clearInterval(timerInterval); isDragging = false; if (currentPointerId !== null) { try { gridElement.releasePointerCapture(currentPointerId); } catch(e) { console.warn("Failed to release pointer capture:", e); } currentPointerId = null; } selectionBoxElement.style.display = 'none'; if (soundsReady && gameOverSound) { try { gameOverSound.triggerAttackRelease("C3", "0.5n", Tone.now()); } catch(e) { console.error("Error playing game over sound:", e); } } clearTimeout(comboTimeout); console.log("Game Over!", reason); const finalScore = score; showMessage(`${reason} 최종 점수: ${finalScore}`); if (finalScore > 0) { setTimeout(() => { const playerName = prompt("랭킹에 등록할 이름을 입력하세요 (최대 10자):", "Player"); if (playerName) { const trimmedName = playerName.trim().slice(0, 10); if (trimmedName) { saveScore(trimmedName, finalScore); displayRankings(); } } }, 100); } }
 
         // --- Pointer Event Handlers ---
-        function handlePointerDown(event) {
-             if (!soundsReady) { initSounds(); }
-             if (isGameOver || isDragging) return;
-            isDragging = true;
-            currentPointerId = event.pointerId;
-            try { event.target.setPointerCapture(currentPointerId); } catch(e) { console.warn("Failed to set pointer capture:", e); }
-            dragStartX = event.pageX;
-            dragStartY = event.pageY;
-            selectionBoxElement.style.left = `${dragStartX}px`;
-            selectionBoxElement.style.top = `${dragStartY}px`;
-            selectionBoxElement.style.width = '0px';
-            selectionBoxElement.style.height = '0px';
-            selectionBoxElement.style.display = 'block';
-            selectionBoxElement.classList.remove('target-sum');
-            event.target.addEventListener('pointermove', handlePointerMove);
-            event.target.addEventListener('pointerup', handlePointerUp);
-            event.target.addEventListener('pointercancel', handlePointerUp);
-            console.log("Drag Start - Pointer ID:", currentPointerId);
-        }
-
-        function handlePointerMove(event) {
-            if (!isDragging || isGameOver || event.pointerId !== currentPointerId) return;
-            event.preventDefault();
-            const currentX = event.pageX;
-            const currentY = event.pageY;
-            const x = Math.min(dragStartX, currentX);
-            const y = Math.min(dragStartY, currentY);
-            const width = Math.abs(dragStartX - currentX);
-            const height = Math.abs(dragStartY - currentY);
-            selectionBoxElement.style.left = `${x}px`;
-            selectionBoxElement.style.top = `${y}px`;
-            selectionBoxElement.style.width = `${width}px`;
-            selectionBoxElement.style.height = `${height}px`;
-            const selectionAbsRect = { left: x, top: y, right: x + width, bottom: y + height };
-            selectedApplesData = [];
-            currentSum = 0;
-            apples.flat().forEach(appleData => {
-                 if (appleData && appleData.element && gridElement.contains(appleData.element)) {
-                     const isSelected = isInsideSelection(appleData.element, selectionAbsRect);
-                     if (isSelected) { selectedApplesData.push(appleData); currentSum += appleData.value; appleData.element.classList.add('in-selection-box'); }
-                     else { appleData.element.classList.remove('in-selection-box'); }
-                 }
-            });
-            if (currentSum === TARGET_SUM) { selectionBoxElement.classList.add('target-sum'); }
-            else { selectionBoxElement.classList.remove('target-sum'); }
-        }
-
-        function handlePointerUp(event) {
-            if (!isDragging || isGameOver || event.pointerId !== currentPointerId) return;
-            isDragging = false;
-            try { event.target.releasePointerCapture(currentPointerId); } catch(e) { console.warn("Failed to release pointer capture:", e); }
-            currentPointerId = null;
-            selectionBoxElement.style.display = 'none';
-            event.target.removeEventListener('pointermove', handlePointerMove);
-            event.target.removeEventListener('pointerup', handlePointerUp);
-            event.target.removeEventListener('pointercancel', handlePointerUp);
-            apples.flat().forEach(appleData => { if (appleData && appleData.element) { appleData.element.classList.remove('in-selection-box'); } });
-            console.log("Drag End, Sum:", currentSum);
-
-            if (currentSum === TARGET_SUM && selectedApplesData.length > 0) {
-                const now = Date.now();
-                if (now - lastClearTime < COMBO_TIMEOUT_MS) { comboCount++; } else { comboCount = 1; }
-                lastClearTime = now;
-                const baseScore = selectedApplesData.length;
-                const comboBonus = comboCount > 1 ? (comboCount -1) * COMBO_BONUS_BASE : 0;
-                const scoreEarned = baseScore + comboBonus;
-                console.log(`Target sum matched! Base: ${baseScore}, Combo: ${comboCount}, Bonus: ${comboBonus}, Total Earned: ${scoreEarned}`);
-                score += scoreEarned;
-                applesRemaining -= selectedApplesData.length;
-                updateScore();
-                updateApplesLeftDisplay();
-                updateComboDisplay();
-                resetComboTimer();
-                if (soundsReady && successSound) { try { successSound.triggerAttackRelease("C5", "8n", Tone.now()); } catch(e) { console.error("Error playing success sound:", e); } }
-
-                selectedApplesData.forEach(appleData => {
-                    if (appleData && appleData.element && gridElement.contains(appleData.element)) {
-                        const { element, row, col } = appleData;
-                        element.classList.add('selected-for-removal');
-                        element.addEventListener('transitionend', () => {
-                            if (gridElement.contains(element)) {
-                                const placeholder = document.createElement('div');
-                                placeholder.classList.add('apple-placeholder');
-                                if (element.parentNode === gridElement) { gridElement.replaceChild(placeholder, element); }
-                            }
-                        }, { once: true });
-                        apples[row][col] = null;
-                    }
-                });
-                if (applesRemaining <= 0) { endGame("모든 사과 제거 완료!"); }
-            } else if (selectedApplesData.length > 0) { console.log("Drag ended, sum not 10."); }
-            selectedApplesData = [];
-            currentSum = 0;
-        }
-
-        function isInsideSelection(element, selectionAbsRect) {
-            const elemRect = element.getBoundingClientRect();
-            const elemCenterX = elemRect.left + elemRect.width / 2 + window.scrollX;
-            const elemCenterY = elemRect.top + elemRect.height / 2 + window.scrollY;
-            return (elemCenterX >= selectionAbsRect.left && elemCenterX <= selectionAbsRect.right && elemCenterY >= selectionAbsRect.top && elemCenterY <= selectionAbsRect.bottom);
-        }
+        function handlePointerDown(event) { /* Same as before */ if (!soundsReady) { initSounds(); } if (isGameOver || isDragging) return; isDragging = true; currentPointerId = event.pointerId; try { event.target.setPointerCapture(currentPointerId); } catch(e) { console.warn("Failed to set pointer capture:", e); } dragStartX = event.pageX; dragStartY = event.pageY; selectionBoxElement.style.left = `${dragStartX}px`; selectionBoxElement.style.top = `${dragStartY}px`; selectionBoxElement.style.width = '0px'; selectionBoxElement.style.height = '0px'; selectionBoxElement.style.display = 'block'; selectionBoxElement.classList.remove('target-sum'); event.target.addEventListener('pointermove', handlePointerMove); event.target.addEventListener('pointerup', handlePointerUp); event.target.addEventListener('pointercancel', handlePointerUp); console.log("Drag Start - Pointer ID:", currentPointerId); }
+        function handlePointerMove(event) { /* Same as before, but uses currentGridRows/Cols implicitly via apples array */ if (!isDragging || isGameOver || event.pointerId !== currentPointerId) return; event.preventDefault(); const currentX = event.pageX; const currentY = event.pageY; const x = Math.min(dragStartX, currentX); const y = Math.min(dragStartY, currentY); const width = Math.abs(dragStartX - currentX); const height = Math.abs(dragStartY - currentY); selectionBoxElement.style.left = `${x}px`; selectionBoxElement.style.top = `${y}px`; selectionBoxElement.style.width = `${width}px`; selectionBoxElement.style.height = `${height}px`; const selectionAbsRect = { left: x, top: y, right: x + width, bottom: y + height }; selectedApplesData = []; currentSum = 0; apples.flat().forEach(appleData => { if (appleData && appleData.element && gridElement.contains(appleData.element)) { const isSelected = isInsideSelection(appleData.element, selectionAbsRect); if (isSelected) { selectedApplesData.push(appleData); currentSum += appleData.value; appleData.element.classList.add('in-selection-box'); } else { appleData.element.classList.remove('in-selection-box'); } } }); if (currentSum === TARGET_SUM) { selectionBoxElement.classList.add('target-sum'); } else { selectionBoxElement.classList.remove('target-sum'); } }
+        function handlePointerUp(event) { /* Same as before */ if (!isDragging || isGameOver || event.pointerId !== currentPointerId) return; isDragging = false; try { event.target.releasePointerCapture(currentPointerId); } catch(e) { console.warn("Failed to release pointer capture:", e); } currentPointerId = null; selectionBoxElement.style.display = 'none'; event.target.removeEventListener('pointermove', handlePointerMove); event.target.removeEventListener('pointerup', handlePointerUp); event.target.removeEventListener('pointercancel', handlePointerUp); apples.flat().forEach(appleData => { if (appleData && appleData.element) { appleData.element.classList.remove('in-selection-box'); } }); console.log("Drag End, Sum:", currentSum); if (currentSum === TARGET_SUM && selectedApplesData.length > 0) { const now = Date.now(); if (now - lastClearTime < COMBO_TIMEOUT_MS) { comboCount++; } else { comboCount = 1; } lastClearTime = now; const baseScore = selectedApplesData.length; const comboBonus = comboCount > 1 ? (comboCount -1) * COMBO_BONUS_BASE : 0; const scoreEarned = baseScore + comboBonus; console.log(`Target sum matched! Base: ${baseScore}, Combo: ${comboCount}, Bonus: ${comboBonus}, Total Earned: ${scoreEarned}`); score += scoreEarned; applesRemaining -= selectedApplesData.length; updateScore(); updateApplesLeftDisplay(); updateComboDisplay(); resetComboTimer(); if (soundsReady && successSound) { try { successSound.triggerAttackRelease("C5", "8n", Tone.now()); } catch(e) { console.error("Error playing success sound:", e); } } selectedApplesData.forEach(appleData => { if (appleData && appleData.element && gridElement.contains(appleData.element)) { const { element, row, col } = appleData; element.classList.add('selected-for-removal'); element.addEventListener('transitionend', () => { if (gridElement.contains(element)) { const placeholder = document.createElement('div'); placeholder.classList.add('apple-placeholder'); if (element.parentNode === gridElement) { gridElement.replaceChild(placeholder, element); } } }, { once: true }); apples[row][col] = null; } }); if (applesRemaining <= 0) { endGame("모든 사과 제거 완료!"); } } else if (selectedApplesData.length > 0) { console.log("Drag ended, sum not 10."); } selectedApplesData = []; currentSum = 0; }
+        function isInsideSelection(element, selectionAbsRect) { /* Same as before */ const elemRect = element.getBoundingClientRect(); const elemCenterX = elemRect.left + elemRect.width / 2 + window.scrollX; const elemCenterY = elemRect.top + elemRect.height / 2 + window.scrollY; return (elemCenterX >= selectionAbsRect.left && elemCenterX <= selectionAbsRect.right && elemCenterY >= selectionAbsRect.top && elemCenterY <= selectionAbsRect.bottom); }
 
         // --- Global Event Listeners ---
         gridElement.addEventListener('pointerdown', handlePointerDown);
         resetButton.addEventListener('click', initGame);
         closeMessageButton.addEventListener('click', hideMessage);
-        window.addEventListener('resize', () => { if (!isGameOver) { resetTimerGauge(); updateTimerGauge(); } });
+        // Update layout and gauge on resize
+        window.addEventListener('resize', () => {
+            // No need to re-init game on resize, CSS handles layout.
+            // Just update gauge orientation/style if needed.
+            if (!isGameOver) {
+                 resetTimerGauge(); // Re-apply correct styles based on new size
+                 updateTimerGauge(); // Update fill level
+            }
+        });
 
         // --- Game Initialization ---
         document.body.addEventListener('pointerdown', initSounds, { once: true });
         displayRankings();
-        initGame();
+        initGame(); // Start the game with appropriate grid size
     </script>
 
 </body>
